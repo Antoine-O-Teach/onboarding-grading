@@ -22,12 +22,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Exécute les tests avec pytest et génère un rapport de notation
-      - name: Run tests with pytest
-        uses: education/autograding@v1 # Action spéciale de GitHub Classroom
+      # Exécute les tests de l'étudiant et mesure la couverture de code
+      # La commande génère un rapport de couverture simple dans le terminal.
+      - name: Run student tests and measure coverage
+        id: coverage_check # Donne un ID à cette étape pour réutiliser sa sortie
+        run: pytest --cov=algos --cov-fail-under=90 tests/test_listes.py
+        # --cov=algos : mesure la couverture sur le code du dossier 'algos'
+        # --cov-fail-under=90 : le test échoue si la couverture est < 90%
+        # L'échec ou la réussite de cette commande est notre test de qualité.
+
+      # Attribue des points en fonction de la réussite de l'étape précédente
+      - name: Grade test quality based on coverage
+        uses: education/autograding@v1
         with:
-          # Le nom qui apparaîtra dans l'interface de notation
-          # La commande exécute TOUS les tests. Pytest trouvera tous les fichiers test_*.py
-          # L'option --continue-on-collection-errors est utile si un étudiant fait une erreur de syntaxe
-          # qui empêche pytest de charger un fichier.
-          tests: pytest --continue-on-collection-errors
+          # Points pour la qualité des tests.
+          # L'astuce ici est d'utiliser la conclusion de l'étape précédente.
+          # Si l'étape 'coverage_check' a réussi (couverture >= 90%), on donne 10 points.
+          # Sinon (elle a échoué), on donne 0.
+          tests: |
+            if [ "${{ steps.coverage_check.conclusion }}" == "success" ]; then
+              echo "[10/10] La couverture de tests est excellente (>= 90%)."
+            else
+              echo "[0/10] La couverture de tests est insuffisante (< 90%)."
+              exit 1
+            fi
