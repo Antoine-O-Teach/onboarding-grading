@@ -1,0 +1,33 @@
+name: Autograding
+
+on: [push] # Se déclenche à chaque push de l'étudiant
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Récupère le code de l'étudiant
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Met en place l'environnement Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # Choisissez la version de Python
+
+      # 3. Installe les dépendances (pytest)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Exécute les tests avec pytest et génère un rapport de notation
+      - name: Run tests with pytest
+        uses: education/autograding@v1 # Action spéciale de GitHub Classroom
+        with:
+          # Le nom qui apparaîtra dans l'interface de notation
+          # La commande exécute TOUS les tests. Pytest trouvera tous les fichiers test_*.py
+          # L'option --continue-on-collection-errors est utile si un étudiant fait une erreur de syntaxe
+          # qui empêche pytest de charger un fichier.
+          tests: pytest --continue-on-collection-errors
