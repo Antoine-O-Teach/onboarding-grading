@@ -15,7 +15,7 @@ def valider_mot_de_passe(mot_de_passe: str) -> bool:
     La fonction doit retourner True si le mot de passe est valide, False sinon.
     """
     # Votre code ici
-    pass
+    return True
 
 
 def compresser_chaine(chaine: str) -> str:
@@ -35,4 +35,4 @@ def compresser_chaine(chaine: str) -> str:
     - "" -> "" (chaîne vide)
     """
     # Votre code ici
-    pass
+    return True

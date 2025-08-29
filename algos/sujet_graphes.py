@@ -35,4 +35,4 @@ def trouver_plus_court_chemin(graphe: dict, depart: str, arrivee: str) -> list |
     Pour cet exemple, le chemin via 'C' serait trouvé en premier : ['A', 'C', 'F'].
     """
     # Votre code ici
-    pass
+    return None
